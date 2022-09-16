@@ -22,12 +22,11 @@ public class ElevateProccess implements Elevate {
     public void transport() {
         int necessaryFloor;
         int currentFloor = 1;
-        for (int i = 1; i <= 25; i++) {
+        for (int i = 1; i <= 40; i++) {
             List<Cargo> waitingObjects = floorsPopulation.get(currentFloor);
             List<Cargo> objectsOnBoard = elevator.getObjectsOnBoard();
             if (waitingObjects.isEmpty() && objectsOnBoard.isEmpty()) {
                 refreshObjectsOnFloor(currentFloor++, i);
-//                currentFloor++;
                 continue;
             }
 
@@ -85,7 +84,7 @@ public class ElevateProccess implements Elevate {
         } else if (objectsOnBoard.isEmpty()) {
             int freePlace = 5;
             if (!waitingObjects.isEmpty()) {
-                necessaryFloor = waitingObjects.get(0).getTargetFloor();
+                necessaryFloor = checkDirectionByWaitingObjects(currentFloor);
             } else if (currentFloor == 1) {
                 necessaryFloor = 2;
             } else {
@@ -103,6 +102,18 @@ public class ElevateProccess implements Elevate {
         elevator.setObjectsOnBoard(objectsOnBoard);
 
         return waitingObjects;
+    }
+
+    private int checkDirectionByWaitingObjects(int currentFloor) {
+        List<Cargo> waitingObjects = floorsPopulation.get(currentFloor);
+
+        long isUp = waitingObjects.stream().filter(c -> c.getTargetFloor() > currentFloor).count();
+        long isDown = waitingObjects.stream().filter(c -> c.getTargetFloor() < currentFloor).count();
+        if (isUp > isDown) {
+            return (int) isUp;
+        } else {
+            return (int) isDown;
+        }
     }
 
     private void uploadElevator(int currentFloor, List<Cargo> objectsOnBoard, int freePlace, int necessaryFloor, Iterator<Cargo> waitingObjectsIter) {
