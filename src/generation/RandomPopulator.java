@@ -9,7 +9,6 @@ public class RandomPopulator implements Populator {
 
     private static final int MIN_FLOORS = 5;
     private static final int MAX_FLOORS = 20;
-    private static final int MIN_PERSONS_ON_FLOOR = 0;
     private static final int MAX_PERSONS_ON_FLOOR = 10;
 
     private final int buildingFloorsCount;
@@ -21,8 +20,7 @@ public class RandomPopulator implements Populator {
     }
 
     private int generateFloors() {
-        int r = new Random().nextInt(MAX_FLOORS - MIN_FLOORS + 1) + MIN_FLOORS;
-        return r;
+        return new Random().nextInt(MAX_FLOORS - MIN_FLOORS + 1) + MIN_FLOORS;
     }
 
     private Cargo personGenerator(int startFloor) {

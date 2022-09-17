@@ -6,11 +6,14 @@ import model.*;
 import java.util.*;
 
 public class ElevateProccess implements Elevate {
-
     private final int buildingFloorsCount;
     private Map<Integer, List<Cargo>> floorsPopulation;
     private final Elevator elevator;
     private final List<Step> stepList;
+
+    public static int ITERATIONS_COUNT;
+    private static final String ELEVATOR_DIRECTION_UP = "^";
+    private static final String ELEVATOR_DIRECTION_DOWN = "v";
 
     public ElevateProccess(Populator populator, Elevator elevator) {
         this.buildingFloorsCount = populator.getBuildingFloorsCount();
@@ -22,7 +25,7 @@ public class ElevateProccess implements Elevate {
     public void transport() {
         int necessaryFloor;
         int currentFloor = 1;
-        for (int i = 1; i <= 40; i++) {
+        for (int i = 1; i <= ITERATIONS_COUNT; i++) {
             List<Cargo> waitingObjects = floorsPopulation.get(currentFloor);
             List<Cargo> objectsOnBoard = elevator.getObjectsOnBoard();
             if (waitingObjects.isEmpty() && objectsOnBoard.isEmpty()) {
@@ -79,13 +82,13 @@ public class ElevateProccess implements Elevate {
         List<Cargo> objectsOnBoard = elevator.getObjectsOnBoard();
         int necessaryFloor;
 
-        if (objectsOnBoard.size() == 5) {
+        if (objectsOnBoard.size() == Elevator.MAX_ELEVATOR_CAPACITY) {
             return waitingObjects;
         } else if (objectsOnBoard.isEmpty()) {
-            int freePlace = 5;
+            int freePlace = Elevator.MAX_ELEVATOR_CAPACITY;
             if (!waitingObjects.isEmpty()) {
                 necessaryFloor = checkDirectionByWaitingObjects(currentFloor);
-            } else if (currentFloor == 1) {
+            } else if (currentFloor == Elevator.START_ELEVATOR_FLOOR) {
                 necessaryFloor = 2;
             } else {
                 necessaryFloor = 1;
@@ -138,9 +141,9 @@ public class ElevateProccess implements Elevate {
 
     private String setElevatorDirection(int currentFloor, int necessaryElevatorFloor) {
         if (currentFloor <= necessaryElevatorFloor) {
-            return "^";
+            return ELEVATOR_DIRECTION_UP;
         } else {
-            return "v";
+            return ELEVATOR_DIRECTION_DOWN;
         }
     }
 
@@ -201,9 +204,5 @@ public class ElevateProccess implements Elevate {
 
     public int getBuildingFloorsCount() {
         return buildingFloorsCount;
-    }
-
-    public Map<Integer, List<Cargo>> getFloorsPopulation() {
-        return floorsPopulation;
     }
 }
